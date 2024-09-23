@@ -58,10 +58,10 @@
             canvas.parent('canvas-container');
             colorMode(HSB);
             
-            select('#speedSlider').input(() => speed = this.value());
-            select('#scaleSlider').input(() => scale = this.value());
-            select('#distortionSlider').input(() => distortion = this.value());
-            select('#colorSlider').input(() => colorHue = this.value());
+            select('#speedSlider').input(updateSpeed);
+            select('#scaleSlider').input(updateScale);
+            select('#distortionSlider').input(updateDistortion);
+            select('#colorSlider').input(updateColorHue);
             
             select('#resetBtn').mousePressed(resetControls);
             select('#randomizeBtn').mousePressed(randomizeControls);
@@ -77,6 +77,22 @@
                 }
             }
             t += speed;
+        }
+
+        function updateSpeed() {
+            speed = parseFloat(this.value());
+        }
+
+        function updateScale() {
+            scale = parseFloat(this.value());
+        }
+
+        function updateDistortion() {
+            distortion = parseFloat(this.value());
+        }
+
+        function updateColorHue() {
+            colorHue = parseFloat(this.value());
         }
 
         function resetControls() {
