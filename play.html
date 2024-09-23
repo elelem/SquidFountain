@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Visual Effect Demo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+        body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+        canvas { display: block; margin-bottom: 20px; }
+        .controls { display: flex; flex-wrap: wrap; gap: 10px; }
+        .control { display: flex; flex-direction: column; align-items: flex-start; }
+        label { margin-bottom: 5px; }
+        button { margin-top: 10px; padding: 5px 10px; }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    <div class="controls">
+        <div class="control">
+            <label for="speedSlider">Animation Speed</label>
+            <input type="range" id="speedSlider" min="0" max="0.2" step="0.01" value="0.05">
+        </div>
+        <div class="control">
+            <label for="scaleSlider">Pattern Scale</label>
+            <input type="range" id="scaleSlider" min="1" max="20" step="0.5" value="8">
+        </div>
+        <div class="control">
+            <label for="distortionSlider">Distortion</label>
+            <input type="range" id="distortionSlider" min="1" max="10" step="0.5" value="5">
+        </div>
+        <div class="control">
+            <label for="colorSlider">Color Hue</label>
+            <input type="range" id="colorSlider" min="0" max="360" step="1" value="0">
+        </div>
+        <button id="resetBtn">Reset</button>
+        <button id="randomizeBtn">Randomize</button>
+    </div>
+    <script>
+        let t = 0;
+        let speed = 0.05;
+        let scale = 8;
+        let distortion = 5;
+        let colorHue = 0;
+
+        function a(x, y) {
+            let k = x / scale - 25;
+            let e = y / scale - 25;
+            let d = distortion * Math.cos(Math.sqrt(k * k + e * e) / 3);
+            return [
+                (x + d * k * Math.sin(d * 2.5 - t) + k / 2 * Math.sin(y / 3 + t)) / 2 + 100,
+                d * 19 + (d - 2) * 5 * Math.abs(Math.cos(d / 2 - t / 2)) + d * e + 215
+            ];
+        }
+
+        function setup() {
+            let canvas = createCanvas(400, 400);
+            canvas.parent('canvas-container');
+            colorMode(HSB);
+            
+            select('#speedSlider').input(() => speed = this.value());
+            select('#scaleSlider').input(() => scale = this.value());
+            select('#distortionSlider').input(() => distortion = this.value());
+            select('#colorSlider').input(() => colorHue = this.value());
+            
+            select('#resetBtn').mousePressed(resetControls);
+            select('#randomizeBtn').mousePressed(randomizeControls);
+        }
+
+        function draw() {
+            background(0);
+            stroke(colorHue, 100, 100, 0.25);
+            for (let y = 100; y < 300; y++) {
+                for (let x = 100; x < 300; x++) {
+                    let [px, py] = a(x, y);
+                    point(px, py);
+                }
+            }
+            t += speed;
+        }
+
+        function resetControls() {
+            speed = 0.05;
+            scale = 8;
+            distortion = 5;
+            colorHue = 0;
+            updateSliders();
+        }
+
+        function randomizeControls() {
+            speed = random(0, 0.2);
+            scale = random(1, 20);
+            distortion = random(1, 10);
+            colorHue = random(0, 360);
+            updateSliders();
+        }
+
+        function updateSliders() {
+            select('#speedSlider').value(speed);
+            select('#scaleSlider').value(scale);
+            select('#distortionSlider').value(distortion);
+            select('#colorSlider').value(colorHue);
+        }
+    </script>
+</body>
+</html>
